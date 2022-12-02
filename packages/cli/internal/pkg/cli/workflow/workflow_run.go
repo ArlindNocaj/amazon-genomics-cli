@@ -1,6 +1,8 @@
 package workflow
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func (m *Manager) RunWorkflow(contextName, workflowName, inputsFileUrl string, optionFileUrl string) (string, error) {
 	m.readProjectSpec()

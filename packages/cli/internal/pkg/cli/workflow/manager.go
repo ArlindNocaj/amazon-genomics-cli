@@ -313,6 +313,7 @@ func (m *Manager) uploadWorkflowToS3() {
 	}
 	objectKey := fmt.Sprintf("%s/%s", m.baseWorkflowKey, workflowZip)
 	log.Debug().Msgf("updloading '%s' to 's3://%s/%s", m.packPath, m.bucketName, objectKey)
+
 	m.err = m.S3.UploadFile(m.bucketName, objectKey, m.packPath)
 	if m.err != nil {
 		m.err = fmt.Errorf("unable to upload s3://%s/%s: %w", m.bucketName, objectKey, m.err)

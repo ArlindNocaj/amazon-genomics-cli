@@ -125,6 +125,8 @@ export class CoreStack extends Stack {
     this.table = this.renderTable();
     this.bucket = this.renderBucket(props.bucketName, props.createNewBucket);
 
+    //TODO get default bucket encryption and provide `serverSideEncryption` parameter and potentially KMS key to BucketDeployment
+    // Either call the CDK implementation (if visible) or copy the implementation, https://github.com/ArlindNocaj/aws-cdk/blob/36f1580599900718950c656ac49457ee8213bbcc/packages/cdk-assets/lib/private/handlers/files.ts#:~:text=async%20function-,bucketEncryption,-(s3%3A
     new BucketDeployment(this, "BatchArtifacts", {
       sources: [Source.asset(path.join(__dirname, "../artifacts"))],
       destinationBucket: this.bucket,
