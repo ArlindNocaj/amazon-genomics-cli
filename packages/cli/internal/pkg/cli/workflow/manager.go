@@ -312,8 +312,13 @@ func (m *Manager) uploadWorkflowToS3() {
 		return
 	}
 	objectKey := fmt.Sprintf("%s/%s", m.baseWorkflowKey, workflowZip)
-	log.Debug().Msgf("updloading '%s' to 's3://%s/%s", m.packPath, m.bucketName, objectKey)
 
+	// TODO request default bucket encryption and set the SSE header when uploading to S3
+	// https://docs.aws.amazon.com/sdk-for-go/api/service/s3/#S3.GetBucketEncryption
+	// make sure to also add the KMS key, if KMS is being used, similar to CDK implementation
+	// https://github.com/aws/aws-cdk/blob/2ed006e50b15dfca96395d442ccee648abdbb374/packages/cdk-assets/lib/private/handlers/files.ts#:~:text=let-,paramsEncryption,-%3A%20%7B%5B
+	// potentially add the mechanism in `internal/pkg/aws/s3/sync_file.go` or `internal/pkg/aws/s3/upload_file.go`
+	log.Debug().Msgf("updloading '%s' to 's3://%s/%s", m.packPath, m.bucketName, objectKey)
 	m.err = m.S3.UploadFile(m.bucketName, objectKey, m.packPath)
 	if m.err != nil {
 		m.err = fmt.Errorf("unable to upload s3://%s/%s: %w", m.bucketName, objectKey, m.err)
@@ -359,6 +364,11 @@ func (m *Manager) uploadInputsToS3() {
 		m.err = err
 		return
 	}
+	// TODO request default bucket encryption and set the SSE header when uploading to S3
+	// https://docs.aws.amazon.com/sdk-for-go/api/service/s3/#S3.GetBucketEncryption
+	// make sure to also add the KMS key, if KMS is being used, similar to CDK implementation
+	// https://github.com/aws/aws-cdk/blob/2ed006e50b15dfca96395d442ccee648abdbb374/packages/cdk-assets/lib/private/handlers/files.ts#:~:text=let-,paramsEncryption,-%3A%20%7B%5B
+	// potentially add the mechanism in `internal/pkg/aws/s3/sync_file.go` or `internal/pkg/aws/s3/upload_file.go`
 	baseLocation := filepath.Dir(absInputsPath)
 	log.Debug().Msgf("moving local inputs from '%s' to s3://%s/%s and replacing paths with S3 paths", baseLocation, m.bucketName, objectKey)
 	inputsWithS3Paths, err := m.InputClient.UpdateInputs(baseLocation, m.input, m.bucketName, objectKey)
